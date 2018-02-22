@@ -1,4 +1,9 @@
 # Insight-Data-Engineering-Challenge
+
+#Objective
+The objective of this challenge is to take the data file listing individual contributions and identify the areas that could be the sources of repeat campaign contributions.
+
+# Algorithm
 The code reads the input file line by line and calculate the running median if the repeat donor conditions matches
 Initially every line of the input data is checked for validation conditions as given in the Input File considerations
 with the assumption that data follows the data dictionary as described by the FEC website.
@@ -20,8 +25,10 @@ and 2015 information will be stored in the hash-map for future processing. The d
 The second hash-map stores the Transaction Amount in sorted manner to calculate the percentile values easily.
 The percentile calculation uses nearest rank method.
 
+#Testing
 The code is tested for the sample input and few more test cases covering functionality, negative and scalability aspects and some of those test cases
 are added in the testsuite folder.
 
+#Execution
 Instructions to run the code is the same as that of the provided instructions. There is a single python file as the source and running run_tests.sh will give the
 output results in repeat_donors.txt
