@@ -2,8 +2,11 @@ import datetime
 import math
 import re
 import sys
-dict1 = dict()
-dict2 = dict()
+dict1 = dict() #Key: name + zip_code, Value: {"year":year, "value":cmte_id+Transaction_Amt}
+dict2 = dict() #Key : cmte_id+zip_code+year, Value: Transaction Amout
+
+#arraySort function is used to sort the tr_amount for a particular key value of dict2 as and when it is updated.
+#Uses Insertion sort method
 def arraySort(array_list):
     for loop_var in range(1,len(array_list)):
         curr_val = float(array_list[loop_var])
@@ -12,11 +15,14 @@ def arraySort(array_list):
             array_list[pos]=array_list[pos-1]
             pos = pos-1
         array_list[pos]=curr_val
+
+#Command Line Arguments check
 if(len(sys.argv) != 4):
     print("Wrong number of arguments\n")
 else:
     output_fh = open(sys.argv[3],"w+")
 
+    #Getting Percentile value from input file
     with open(sys.argv[2],"r") as percent_file:
         for line in percent_file:
             percentile = int(line)
@@ -24,10 +30,12 @@ else:
     with open(sys.argv[1],"r") as input_file:
         for line in input_file:
             line_split = line.split("|")
+
+            #Assumption- all the input data will have all the 21 fields(May or may not be NULL)
             if(len(line_split) != 21):
                 continue
-
-        
+            
+            #Input data Validation Check for required fields
             #OTHER_ID
             if(len(line_split[15]) != 0):
                 continue
@@ -74,7 +82,8 @@ else:
                 continue
             tr_date = line_split[13]
         
-            key = name+zip_code
+            #Dict1 key
+            key = name+zip_code     
 
             if (dict1.get(key) == None):
                 postings = {}
@@ -84,6 +93,9 @@ else:
                 dict1[key] = postings
             else:
                 stored_year = dict1[key]["year"]
+
+                # 3 Conditions checked here by comparing stored_year and current year
+
                 if stored_year > year:
                     dict1_val = dict1[key]["value"]
                     dict1[key]["year"] = year
@@ -99,22 +111,30 @@ else:
                             sample_list.append(float(dict1_tr_amt))
                             arraySort(sample_list)
                             dict2[key_dict2] = sample_list
+
                 elif stored_year == year:
                     sample_list = list()
                     sample_list = dict1[key]["value"]
                     val = cmte_id+"|"+tr_amt
                     sample_list.append(val)
                     dict1[key]["value"] = sample_list
+
                 else:
                     key_dict2 = cmte_id+zip_code+year
-                    if dict2.get(key_dict2) is None:
+
+                    #Only one data exists with current key value in dict2
+                    
+                    if dict2.get(key_dict2) is None:        
                         dict2[key_dict2] = [float(tr_amt)]
                         if(float(tr_amt) == int(tr_amt)):
                             tr_amt = int(tr_amt)
                         write_file_content = cmte_id+"|"+zip_code+"|"+year+"|"+str(tr_amt)+"|"+str(tr_amt)+"|1"
                         output_fh.write(write_file_content)
                         output_fh.write("\n")
-                    else:
+
+                    #More than one data exists for the current value of key in dict2
+                        
+                    else:                               
                         temp = list()
                         temp = dict2[key_dict2]
                         temp.append(float(tr_amt))
